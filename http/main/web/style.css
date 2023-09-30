@@ -1,0 +1,24 @@
+
+.container {
+	background-color: rgb(238, 238, 238);
+	justify-content: center;
+	max-width: 940px;
+	margin: 10px auto 10px auto;
+	padding: 5px 20px 5px 20px;
+	border-style: hidden;
+	border-width: 1px;
+	border-radius: 5px;
+}
+
+h1 {
+	font-size: 45px;
+	font-style: italic;
+	font-family: 'Source Sans Pro', sans-serif;
+	color:#008CBA;
+	text-align: center;
+}
+
+body {
+	font-size: 16px;
+	font-family: 'Source Sans Pro', sans-serif;
+}
