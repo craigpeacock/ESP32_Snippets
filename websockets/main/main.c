@@ -19,6 +19,6 @@ void app_main(void)
 
 	while(1) {
 		vTaskDelay(200 / portTICK_PERIOD_MS);
-		ESP_LOGI(TAG, "Hello World");
+		ESP_LOGI(TAG, ">Hello World");
 	}
 }

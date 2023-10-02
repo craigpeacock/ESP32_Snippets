@@ -26,7 +26,8 @@
 		}
 		function onMessage(event) {
 			console.log(event.data);
-			document.getElementById('log').innerHTML += '<div><pre>' + event.data + '</pre></div>';
+			var data = event.data.split("<").join("&lt;").split(">").join("&gt;").split("\"").join("&quot;");
+			document.getElementById('log').innerHTML += '<div><pre>' + data + '</pre></div>';
 			var objDiv = document.getElementById("log");
 			objDiv.scrollTop = objDiv.scrollHeight;
 		}
@@ -39,9 +40,18 @@
 		function Clear() {
 			document.getElementById('log').innerHTML = '';
 		}
-		function Save(text, name, type) {
+		function SaveToFile() {
+			var log_contents = "";
+			var lines = document.getElementsByTagName('pre');
+			for (var i = 0; i < lines.length; i++) {
+				var processed = lines[i].innerHTML.split("&lt;").join("<").split("&gt;").join(">").split("&quot;").join("\"");
+				log_contents += processed + "\n";
+			}
+			SaveFile(log_contents);
+		}
+		function SaveFile(log_contents) {
 			var a = document.createElement("a");
-			var file = new Blob([text], {type: type});
+			file = new Blob([log_contents], { type: "text/plain" });
 			a.href = URL.createObjectURL(file);
 			a.download = "log.txt";
 			a.click();
@@ -57,7 +67,7 @@
 	<div class="container" id="footer" style="text-align: center;">
 			<button class="button_green" onclick="Start()">Start</button>
 			<button class="button_red" onclick="Stop()">Stop</button>
-			<button class="button_blue" onclick="Save('file text', 'myfilename.txt', 'text/plain')">Save</button>
+			<button class="button_blue" onclick="SaveToFile()">Save</button>
 			<button class="button_orange" onclick="Clear()">Clear</button>
 	</div>
 </body>
