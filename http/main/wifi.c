@@ -36,7 +36,7 @@ static const char *TAG = "WIFI";
 
 static int s_retry_num = 0;
 
-static esp_ip6_addr_t s_ipv6_addr;
+esp_netif_t *netif = NULL;
 
 /* Types of ipv6 addresses to be displayed on ipv6 events */
 static const char *s_ipv6_addr_types[] = {
@@ -63,13 +63,7 @@ static void event_handler(void *esp_netif, esp_event_base_t event_base,
 				break;
 
 			case WIFI_EVENT_STA_DISCONNECTED:
-				if (s_retry_num < CONFIG_ESP_MAXIMUM_RETRY) {
-					esp_wifi_connect();
-					s_retry_num++;
-					ESP_LOGI(TAG, "retry to connect to the AP");
-				} else {
-					xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
-				}
+				ESP_LOGI(TAG, "WiFi Disconnected");
 				break;
 
 			default:
@@ -101,9 +95,9 @@ void wifi_start(void)
 
 	// Initialise the underlying TCP/IP Stack
 	ESP_ERROR_CHECK(esp_netif_init());
-
 	ESP_ERROR_CHECK(esp_event_loop_create_default());
-	esp_netif_t *netif = esp_netif_create_default_wifi_sta();
+
+	netif = esp_netif_create_default_wifi_sta();
 
 	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
@@ -155,18 +149,19 @@ void wifi_stop(void)
 {
 	ESP_LOGI(TAG, "Stopping WiFi");
 
-	// Disconnect
+	// Disconnect WiFi station from the AP.
 	ESP_ERROR_CHECK(esp_wifi_disconnect());
 
 	// Stop WiFi
-	//ESP_ERROR_CHECK(esp_wifi_stop());
+	ESP_ERROR_CHECK(esp_wifi_stop());
 
 	// Free all resource allocated in esp_wifi_init and stop WiFi task.
-	//ESP_ERROR_CHECK(esp_wifi_deinit());
+	ESP_ERROR_CHECK(esp_wifi_deinit());
 
 	// Delete the default event loop.
-	//ESP_ERROR_CHECK(esp_event_loop_delete_default());
+	ESP_ERROR_CHECK(esp_event_loop_delete_default());
 
 	// Deinitialise the underlying TCP/IP Stack.
-	//ESP_ERROR_CHECK(esp_netif_deinit());
+	esp_wifi_clear_default_wifi_driver_and_handlers(netif);
+	esp_netif_destroy(netif);
 }

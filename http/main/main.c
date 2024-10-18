@@ -21,7 +21,7 @@ void app_main(void)
 		http_server_start();
 
 		// Stay up for 10 seconds
-		vTaskDelay(10000 / portTICK_PERIOD_MS);
+		vTaskDelay(20000 / portTICK_PERIOD_MS);
 
 		// Now stop
 		http_server_stop();
@@ -30,6 +30,6 @@ void app_main(void)
 	
 		// Stay down for 5 seconds
 		vTaskDelay(5000 / portTICK_PERIOD_MS);
-
+		
 	} while(1);
 }
