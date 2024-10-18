@@ -43,7 +43,7 @@ httpd_uri_t ccs_get = {
 	.user_ctx	= NULL
 };
 
-esp_err_t http_server_init(void)
+esp_err_t http_server_start(void)
 {
 	httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 	config.max_uri_handlers = 10;

@@ -17,6 +17,8 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
+#include "wifi.h"
+
 #define CONFIG_ESP_WIFI_SSID "test_ap"
 #define CONFIG_ESP_WIFI_PASSWORD "secretsquirrel"
 #define CONFIG_ESP_MAXIMUM_RETRY 0
@@ -93,18 +95,11 @@ static void event_handler(void *esp_netif, esp_event_base_t event_base,
 	}
 }
 
-void wifi_init_sta(void)
+void wifi_start(void)
 {
-	//Initialize NVS
-	esp_err_t ret = nvs_flash_init();
-	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-		ESP_ERROR_CHECK(nvs_flash_erase());
-		ret = nvs_flash_init();
-	}
-	ESP_ERROR_CHECK(ret);
-
 	s_wifi_event_group = xEventGroupCreate();
 
+	// Initialise the underlying TCP/IP Stack
 	ESP_ERROR_CHECK(esp_netif_init());
 
 	ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -154,4 +149,24 @@ void wifi_init_sta(void)
 	}
 
 	vEventGroupDelete(s_wifi_event_group);
+}
+
+void wifi_stop(void)
+{
+	ESP_LOGI(TAG, "Stopping WiFi");
+
+	// Disconnect
+	ESP_ERROR_CHECK(esp_wifi_disconnect());
+
+	// Stop WiFi
+	//ESP_ERROR_CHECK(esp_wifi_stop());
+
+	// Free all resource allocated in esp_wifi_init and stop WiFi task.
+	//ESP_ERROR_CHECK(esp_wifi_deinit());
+
+	// Delete the default event loop.
+	//ESP_ERROR_CHECK(esp_event_loop_delete_default());
+
+	// Deinitialise the underlying TCP/IP Stack.
+	//ESP_ERROR_CHECK(esp_netif_deinit());
 }
