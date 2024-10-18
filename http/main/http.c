@@ -7,7 +7,7 @@
 #include "esp_flash.h"
 #include "esp_log.h"
 
-static const char *TAG = "http";
+static const char *TAG = "HTTP";
 
 static httpd_handle_t http_server = NULL;
 
