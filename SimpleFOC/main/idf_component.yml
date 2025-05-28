@@ -1,0 +1,3 @@
+dependencies:
+  esp_simplefoc: {}
+  idf: '>=4.4'
